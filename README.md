@@ -23,12 +23,21 @@ Do take note that the default MAC address of the Bluetooth module was overriden 
 Sample Output from ESP32 Code with BM2 conneced to 12V power supply with adjustable voltage output:
 
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1318 X-1151 Y-0231 Z-1991 T-21 -- Voltage : 9.002289
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-131d X-1151 Y-0201 Z-19c1 T-21 -- Voltage : 9.018728
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1316 X-1141 Y-0221 Z-19d1 T-21 -- Voltage : 8.995714
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-131c X-1141 Y-0231 Z-19c1 T-21 -- Voltage : 9.015440
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-131c X-1141 Y-0231 Z-19c1 T-21 -- Voltage : 9.015440
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1318 X-1141 Y-0231 Z-19b1 T-21 -- Voltage : 9.002289
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-131d X-1151 Y-0211 Z-19e1 T-21 -- Voltage : 9.018728
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1318 X-1131 Y-0231 Z-19c1 T-21 -- Voltage : 9.002289
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1319 X-1141 Y-0241 Z-19e1 T-21 -- Voltage : 9.005577
+
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1317 X-1131 Y-0241 Z-19c1 T-21 -- Voltage : 8.999001
