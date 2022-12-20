@@ -20,7 +20,7 @@ Code can be recompiled for a new hex file using IAR Embedded Workbench IDE
 
 Do take note that the default MAC address of the Bluetooth module was overriden with a custom MAC address on BLE Advertisement code.
 
-Sample Output from ESP32 Code with BM2 conneced to 12V power supply with adjustable voltage output:
+Sample Output from ESP32 Code with BM2 conneced to 12V power supply with adjustable voltage output. Trimmer is set to output 9 Volts.
 
 BM2 Address: 80 eb cb 01 12 cd   ADC Value: V-1318 X-1151 Y-0231 Z-1991 T-21 -- Voltage : 9.002289
 
