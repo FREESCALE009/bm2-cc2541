@@ -660,7 +660,7 @@ void performPeriodicTask( void )
         aData1[24] = read_mems_reg(0x07);       // Bit7-Bit0 (msb Z)
         aData1[25] = read_mems_reg(0x08) + 23;  // Two S-Compliment Chip temperature
         
-        // Send also the voltage on the Advertisement Boyd
+        // Send also the voltage on the Advertisement Body
         
         aData1[17] = adc & 0xff;
 	aData1[18] = (adc >> 8) & 0xff;
