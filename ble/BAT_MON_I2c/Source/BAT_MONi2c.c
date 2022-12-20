@@ -58,16 +58,6 @@
 #define HAL_ADC_EOC         0x80    /* End of Conversion bit */
 #define HAL_ADC_START       0x40    /* Starts Conversion */
 
-#define HAL_ADC_STSEL_EXT   0x00    /* External Trigger */
-#define HAL_ADC_STSEL_FULL  0x10    /* Full Speed, No Trigger */
-#define HAL_ADC_STSEL_T1C0  0x20    /* Timer1, Channel 0 Compare Event Trigger */
-#define HAL_ADC_STSEL_ST    0x30    /* ADCCON1.ST =1 Trigger */
-
-#define HAL_ADC_RAND_NORM   0x00    /* Normal Operation */
-#define HAL_ADC_RAND_LFSR   0x04    /* Clock LFSR */
-#define HAL_ADC_RAND_SEED   0x08    /* Seed Modulator */
-#define HAL_ADC_RAND_STOP   0x0c    /* Stop Random Generator */
-#define HAL_ADC_RAND_BITS   0x0c    /* Bits [3:2] */
 
 #define HAL_ADC_DEC_064     0x00    /* Decimate by 64 : 8-bit resolution */
 #define HAL_ADC_DEC_128     0x10    /* Decimate by 128 : 10-bit resolution */
@@ -75,12 +65,7 @@
 #define HAL_ADC_DEC_512     0x30    /* Decimate by 512 : 14-bit resolution */
 #define HAL_ADC_DEC_BITS    0x30    /* Bits [5:4] */
 
-#define HAL_ADC_STSEL       HAL_ADC_STSEL_ST
-#define HAL_ADC_RAND_GEN    HAL_ADC_RAND_STOP
-#define HAL_ADC_REF_VOLT    HAL_ADC_REF_AVDD
-#define HAL_ADC_DEC_RATE    HAL_ADC_DEC_064
-#define HAL_ADC_SCHN        HAL_ADC_CHN_VDD3
-#define HAL_ADC_ECHN        HAL_ADC_CHN_GND
+
 #define SBP_PERIODIC_EVT_PERIOD                   1000
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
@@ -88,6 +73,7 @@
 #define DEFAULT_ADVERTISING_INTERVAL          1600
 
 // Length of bd addr as a string
+
 #define B_ADDR_STR_LEN                        15
 
 
@@ -95,7 +81,7 @@ uint8 adcRef;
 
 int sensorID = 0;
 uint16 bdcount = 0;
-int i2caddress = 0x00;
+
 
 uint8 BAT_MONi2c_TaskID;   // Task ID for internal task/event processing
 uint16 bdcount;
@@ -109,15 +95,6 @@ uint8 baddr1[]       = {0xb5,0x06,0x10,0xcb,0xeb,0x80};
 uint8 aData1[]       = {0x02,0x01,0x05,0x03,0x03,0xb0,0xfb,0x13,0xff,0x00,0x01,0x80,0xeb,0xcb,0x10,0x06,0xb5,0x00,0x00,0x00,0x00,0x00,0x09,0x00,0x00,0x38,0x00,0x00};
 
 uint8 LedBlink = 0;
-
-/**************************************************************************************************
-    This file contains the I2C interface to off-chip serial EEPROM. While
-    much of the driver is generic, certain portions are specific to the
-    Atmel part AT24C1024. For example, the 17th address bit occurs in the
-    device address byte where one of the address pins should be. Different
-    1 Mb parts use a different bit location. This could be abstracted at
-    a later time if this is the only differentce among these parts.
-**************************************************************************************************/
 
 #include "ioCC2530.h"
 #include "zcomdef.h"
@@ -576,7 +553,6 @@ uint16 AdcRead (uint8 channel, uint8 resolution)
   return ((uint16)reading);
 }
 
-
 void BAT_MONi2c_Init( uint8 task_id )
 {
   BAT_MONi2c_TaskID = task_id;
@@ -684,7 +660,7 @@ void performPeriodicTask( void )
         aData1[24] = read_mems_reg(0x07);       // Bit7-Bit0 (msb Z)
         aData1[25] = read_mems_reg(0x08) + 23;  // Two S-Compliment Chip temperature
         
-        // Send also the voltage data on the Advertisement Body
+        // Send also the voltage on the Advertisement Boyd
         
         aData1[17] = adc & 0xff;
 	aData1[18] = (adc >> 8) & 0xff;
