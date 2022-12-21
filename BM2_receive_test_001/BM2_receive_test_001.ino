@@ -22,7 +22,11 @@ class MyAdvertisedDeviceCallbacks : public BLEAdvertisedDeviceCallbacks
           Serial.print("BM2 Address: ");
           for(i=11;i<=16;i++)
               Serial.printf("%02x ", payLoad[i]);
-          Serial.printf("  ADC Value: V-%02x%02x X-%02x%02x Y-%02x%02x Z-%02x%02x T-%02x -- ",payLoad[18],payLoad[17],payLoad[20],payLoad[19],payLoad[22],payLoad[21],payLoad[24],payLoad[23],payLoad[25]);
+          if (payLoad[26] == 0xfa)
+               Serial.printf("  ADC Value: V-%02x%02x X-%04x Y-%04x Z-%04x Temp-%02x ChipID-%02x -- ",payLoad[18],payLoad[17],((payLoad[20] >> 6) & 0x3) + ((payLoad[19] << 2) & 0x3fb),((payLoad[22] >> 6) & 0x3) + ((payLoad[21] << 2) & 0x3fb) ,((payLoad[24] >> 6) & 0x3) + ((payLoad[23] << 2) & 0x3fb) ,payLoad[25], payLoad[26]);
+          else
+               Serial.printf("  ADC Value: V-%02x%02x X-%02x%02x Y-%02x%02x Z-%02x%02x  Temp-%02x ChipID-%02x -- ",payLoad[18],payLoad[17],payLoad[20],payLoad[19],payLoad[22] ,payLoad[21],payLoad[24],payLoad[23],payLoad[25], payLoad[26]);
+
           Serial.printf("Voltage : %f", (double)(((double)(payLoad[17]+(payLoad[18] << 8)) / 304.16) -7.0682)); // Need to adjust values for proper calibration
           Serial.println("");  
       }
