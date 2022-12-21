@@ -82,6 +82,7 @@ uint8 adcRef;
 int sensorID = 0;
 uint16 bdcount = 0;
 
+uint8 mems_id;
 
 uint8 BAT_MONi2c_TaskID;   // Task ID for internal task/event processing
 uint16 bdcount;
@@ -384,43 +385,81 @@ void init_mems()
        memsSendDeviceAddress(0x31);
        OCM_DATA_HIGH();
        memsWait(5);
-       memsReceiveByte(1);              // Just get the ID
-       memsClock( 1 );
-       memsWait(5);
+       mems_id = memsReceiveByte(1);              // Just get the ID
+       memsWait(2);
        memsStop();
        memsWait(5);
 	
    
-       memsSendDeviceAddress(0x30);
-       memsWait(5);
-       memsSendByte(0x0f);              // Accelerometer G-Range          
-       memsClock( 0 );
-       memsWait(5);
-       memsSendByte(0x05);             // "0101 -- +/- 4g Range"
-       memsWait(5);
-       memsStop();
-       memsWait(5);
+       if (mems_id == 0xfa)
+       {
+          memsSendDeviceAddress(0x30);
+          memsWait(5);
+          memsSendByte(0x0f);              // Accelerometer G-Range          
+          memsClock( 0 );
+          memsWait(5);
+          memsSendByte(0x05);             // "0101 -- +/- 4g Range"
+          memsWait(5);
+          memsStop();
+          memsWait(5);
 
-       memsSendDeviceAddress(0x30);
-       memsWait(5);
-       memsSendByte(0x10);             // Accelerometer Filter Bandwidth
-       memsClock( 0 );
-       memsWait(5);
-       memsSendByte(0x0d);             // "1101 - -- 250Hz "
-       memsWait(5);
-       memsStop();
-       memsWait(5);
+          memsSendDeviceAddress(0x30);
+          memsWait(5);
+          memsSendByte(0x10);             // Accelerometer Filter Bandwidth
+          memsClock( 0 );
+          memsWait(5);
+          memsSendByte(0x0d);             // "1101 - -- 250Hz "
+          memsWait(5);
+          memsStop();
+          memsWait(5);
 
-       memsSendDeviceAddress(0x30);
-       memsWait(5);
-       memsSendByte(0x11);              // Accelerometer Power Mode 
-       memsClock( 0 );
-       memsWait(5);
-       memsSendByte(0x00);              // "00000000 --- NORMAL MODE" 
-       memsWait(5);
-       memsStop();
-       memsWait(5);
-       
+          memsSendDeviceAddress(0x30);
+          memsWait(5);
+          memsSendByte(0x11);              // Accelerometer Power Mode 
+          memsClock( 0 );
+          memsWait(5);
+          memsSendByte(0x00);              // "00000000 --- NORMAL MODE" 
+          memsWait(5);
+          memsStop();
+          memsWait(5);
+       }
+       else
+       {
+          memsSendDeviceAddress(0x30);
+          memsSendByte(0x0f);              // Chip ID Register
+          memsClock( 0 );
+          memsWait(3);
+          OCM_DATA_HIGH();
+          memsSendDeviceAddress(0x31);
+          OCM_DATA_HIGH();
+          memsWait(5);
+          mems_id = memsReceiveByte(1);              // Just get the ID
+          memsWait(2);
+          memsStop();
+          memsWait(5);      
+          
+          
+          memsSendDeviceAddress(0x30);
+          memsWait(5);
+          memsSendByte(0x23);         
+          memsClock( 0 );
+          memsWait(5);
+          memsSendByte(0x10);
+          memsWait(5);
+          memsStop();
+          memsWait(5);
+ 
+          memsSendDeviceAddress(0x30);
+          memsWait(5);
+          memsSendByte(0x20);         
+          memsClock( 0 );
+          memsWait(5);
+          memsSendByte(0x50);           // Lower Power Mode 100 Hz
+          memsWait(5);
+          memsStop();
+          memsWait(5);
+          
+       }
 }
 
 uint8 read_mems_reg(uint8 memsreg)
@@ -428,16 +467,14 @@ uint8 read_mems_reg(uint8 memsreg)
      
   uint8 readval ;
   
-       // Read the BMA250E Registers
+       // Read the MEMs Registers
    
        memsSendDeviceAddress(0x30);
        memsSendByte(memsreg);
        memsClock( 0 );
-       memsWait(3);
        OCM_DATA_HIGH();
        memsSendDeviceAddress(0x31);
        OCM_DATA_HIGH();
-       memsWait(5);
        readval = memsReceiveByte(1);;
        memsStop();
        return readval;
@@ -647,19 +684,37 @@ void performPeriodicTask( void )
 	else
 		P0 = 0x00;
   
+	init_mems();
 
 	uint16 adc = AdcRead(HAL_ADC_CHN_AIN7, HAL_ADC_RESOLUTION_14); //P0.7 
 
         // Just read the Accelerometer Data and Send it on the advertisement body
         
-        aData1[19] = read_mems_reg(0x02);       // Bit7 Bit6 (lsb X) Bit 0 - New X Data Flag
-        aData1[20] = read_mems_reg(0x03);       // Bit7-Bit0 (msb X)
-        aData1[21] = read_mems_reg(0x04);       // Bit7 Bit6 (lsb Y) Bit 0 - New Y Data Flag
-        aData1[22] = read_mems_reg(0x05);       // Bit7-Bit0 (msb Y)
-        aData1[23] = read_mems_reg(0x06);       // Bit7 Bit6 (lsb Z) Bit 0 - New Z Data Flag
-        aData1[24] = read_mems_reg(0x07);       // Bit7-Bit0 (msb Z)
-        aData1[25] = read_mems_reg(0x08) + 23;  // Two S-Compliment Chip temperature
-        
+        if (mems_id == 0xfa)
+        {
+            aData1[19] = read_mems_reg(0x02);       // Bit7 Bit6 (lsb X) Bit 0 - New X Data Flag
+            aData1[20] = read_mems_reg(0x03);       // Bit7-Bit0 (msb X)
+            aData1[21] = read_mems_reg(0x04);       // Bit7 Bit6 (lsb Y) Bit 0 - New Y Data Flag
+            aData1[22] = read_mems_reg(0x05);       // Bit7-Bit0 (msb Y)
+            aData1[23] = read_mems_reg(0x06);       // Bit7 Bit6 (lsb Z) Bit 0 - New Z Data Flag
+            aData1[24] = read_mems_reg(0x07);       // Bit7-Bit0 (msb Z)
+            aData1[25] = read_mems_reg(0x08) + 23;  // Two S-Compliment Chip temperature
+            aData1[26] = mems_id;
+        }
+        else // Register data with CHIP ID 0x11
+        {
+            aData1[19] = read_mems_reg(0x28);       // Bit7 Bit6 (lsb X) Bit 0 - New X Data Flag
+            aData1[20] = read_mems_reg(0x29);       // Bit7-Bit0 (msb X)
+            aData1[21] = read_mems_reg(0x2a);       // Bit7 Bit6 (lsb Y) Bit 0 - New Y Data Flag
+            aData1[22] = read_mems_reg(0x2b);       // Bit7-Bit0 (msb Y)
+            aData1[23] = read_mems_reg(0x2c);       // Bit7 Bit6 (lsb Z) Bit 0 - New Z Data Flag
+            aData1[24] = read_mems_reg(0x2d);       // Bit7-Bit0 (msb Z)
+            aData1[25] = read_mems_reg(0x26) + 25;  // Two S-Compliment Chip temperature
+            aData1[26] = mems_id;
+        }
+
+
+          
         // Send also the voltage on the Advertisement Body
         
         aData1[17] = adc & 0xff;
